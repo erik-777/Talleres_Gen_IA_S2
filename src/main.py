@@ -1,12 +1,13 @@
 import json
 from pathlib import Path
 
-from prompts import ORDER_PROMPT_TEMPLATE, RETURN_PROMPT_TEMPLATE
+from llm_client import generate
+from prompts import ORDER_PROMPT_BASIC, ORDER_PROMPT_TEMPLATE, RETURN_PROMPT_TEMPLATE
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-ORDERS_FILE = BASE_DIR / "data" / "orders.json"
-POLICIES_FILE = BASE_DIR / "data" / "return_policies.json"
+ORDERS_FILE = BASE_DIR / "Data" / "orders.json"
+POLICIES_FILE = BASE_DIR / "Data" / "return_policies.json"
 
 
 def load_json(path):
@@ -14,77 +15,89 @@ def load_json(path):
         return json.load(f)
 
 
-def get_order_by_tracking(tracking_number, orders):
+def format_orders_context(orders):
+    lines = []
     for order in orders:
-        if order["tracking_number"] == tracking_number:
-            return order
-    return None
+        lines.append(
+            f"- tracking_number: {order['tracking_number']} | "
+            f"producto: {order['product']} | "
+            f"estado: {order['status']} | "
+            f"entrega estimada: {order['estimated_delivery']} | "
+            f"link: {order['tracking_link']} | "
+            f"motivo retraso: {order['delay_reason'] or 'N/A'}"
+        )
+    return "\n".join(lines)
 
 
-def get_policy_by_category(category, policies):
+def format_policies_context(policies):
+    lines = []
     for policy in policies:
-        if policy["category"].lower() == category.lower():
-            return policy
-    return None
+        lines.append(
+            f"- categoría: {policy['category']} | "
+            f"devolución permitida: {'sí' if policy['return_allowed'] else 'no'} | "
+            f"condiciones: {policy['conditions']}"
+        )
+    return "\n".join(lines)
 
 
-def simulate_order_response(tracking_number):
+def generate_order_response_basic(tracking_number):
+    """Prompt sin rol, sin contexto ni datos: el modelo no tiene forma de saber la respuesta real."""
+    prompt = ORDER_PROMPT_BASIC.format(tracking_number=tracking_number)
+    return generate(prompt)
+
+
+def generate_order_response_improved(tracking_number):
+    """Prompt con rol, instrucciones explícitas y la base de pedidos como contexto."""
     orders = load_json(ORDERS_FILE)
-    order = get_order_by_tracking(tracking_number, orders)
-
-    if not order:
-        return (
-            f"No encontré información para el pedido {tracking_number}. "
-            "Por favor verifica el número de seguimiento o contacta a soporte humano."
-        )
-
-    response = (
-        f"Hola. Revisé el pedido {order['tracking_number']}.\n"
-        f"Estado actual: {order['status']}.\n"
-        f"Producto: {order['product']}.\n"
-        f"Fecha estimada de entrega: {order['estimated_delivery']}.\n"
-        f"Puedes seguirlo aquí: {order['tracking_link']}.\n"
+    prompt = ORDER_PROMPT_TEMPLATE.format(
+        orders_data=format_orders_context(orders),
+        tracking_number=tracking_number,
     )
-
-    if order["status"].lower() == "retrasado":
-        response += (
-            f"Lamentamos la demora. Motivo reportado: {order['delay_reason']}"
-        )
-
-    return response
+    return generate(prompt)
 
 
-def simulate_return_response(product_name, category, package_status, reason):
+def generate_return_response(product_name, category, package_status, reason):
     policies = load_json(POLICIES_FILE)
-    policy = get_policy_by_category(category, policies)
-
-    if not policy:
-        return (
-            f"No encontré una política específica para la categoría '{category}'. "
-            "Tu caso debe ser revisado por un agente humano."
-        )
-
-    if policy["return_allowed"]:
-        return (
-            f"La devolución del producto '{product_name}' sí está permitida.\n"
-            f"Condiciones: {policy['conditions']}\n"
-            "Siguiente paso: comparte tu número de pedido y evidencia del estado del producto para iniciar el proceso."
-        )
-
-    return (
-        f"Lamento informarte que la devolución del producto '{product_name}' no está permitida.\n"
-        f"Motivo: {policy['conditions']}\n"
-        "Si consideras que existe un error o una condición excepcional, el caso puede ser revisado por soporte humano."
+    prompt = RETURN_PROMPT_TEMPLATE.format(
+        policies_data=format_policies_context(policies),
+        product_name=product_name,
+        category=category,
+        package_status=package_status,
+        reason=reason,
     )
+    return generate(prompt)
 
 
 if __name__ == "__main__":
-    print("=== Consulta de pedido ===")
-    print(simulate_order_response("ECO1004"))
-    print("\n=== Consulta de devolución ===")
-    print(simulate_return_response(
-        product_name="Shampoo sólido natural",
-        category="productos de higiene",
-        package_status="abierto",
-        reason="No cumplió mis expectativas"
-    ))
+    tracking_number = "ECO1004"
+
+    print("=== Ejercicio 1: estado de pedido ===")
+    print(f"\n--- Prompt básico (sin contexto) para {tracking_number} ---")
+    print(generate_order_response_basic(tracking_number))
+
+    print(f"\n--- Prompt mejorado (con contexto) para {tracking_number} ---")
+    print(generate_order_response_improved(tracking_number))
+
+    print("\n--- Prompt mejorado con tracking inexistente (ECO9999) ---")
+    print(generate_order_response_improved("ECO9999"))
+
+    print("\n=== Ejercicio 2: devolución de producto ===")
+    print("\n--- Caso no devolvible (producto de higiene abierto) ---")
+    print(
+        generate_return_response(
+            product_name="Shampoo sólido natural",
+            category="productos de higiene",
+            package_status="abierto",
+            reason="No cumplió mis expectativas",
+        )
+    )
+
+    print("\n--- Caso devolvible (botella sin usar) ---")
+    print(
+        generate_return_response(
+            product_name="Botella térmica de acero reutilizable",
+            category="botellas",
+            package_status="cerrado, sin usar",
+            reason="Cambié de opinión",
+        )
+    )

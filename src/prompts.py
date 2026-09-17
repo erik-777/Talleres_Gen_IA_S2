@@ -1,3 +1,6 @@
+ORDER_PROMPT_BASIC = """Dame el estado del pedido {tracking_number}."""
+
+
 ORDER_PROMPT_TEMPLATE = """
 Actúa como un agente de servicio al cliente de EcoMarket.
 
