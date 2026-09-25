@@ -1,0 +1,62 @@
+[
+  {
+    "id": "faq-001",
+    "categoria": "envios",
+    "pregunta": "¿Cuánto tiempo tarda en llegar mi pedido?",
+    "respuesta": "El tiempo estándar de entrega es de 3 a 7 días hábiles a nivel nacional, dependiendo de la ciudad de destino. Puedes ver la fecha estimada exacta de tu pedido en la sección de rastreo con tu número de seguimiento."
+  },
+  {
+    "id": "faq-002",
+    "categoria": "envios",
+    "pregunta": "¿EcoMarket hace envíos internacionales?",
+    "respuesta": "Por ahora solo realizamos envíos dentro de Colombia. Estamos evaluando expandir la cobertura a otros países de la región en el futuro."
+  },
+  {
+    "id": "faq-003",
+    "categoria": "pagos",
+    "pregunta": "¿Qué métodos de pago acepta EcoMarket?",
+    "respuesta": "Aceptamos tarjetas de crédito y débito Visa y Mastercard, PSE, y pago contra entrega en las principales ciudades. No aceptamos criptomonedas ni transferencias internacionales."
+  },
+  {
+    "id": "faq-004",
+    "categoria": "pagos",
+    "pregunta": "¿Puedo pagar mi pedido en cuotas?",
+    "respuesta": "Sí, para pagos con tarjeta de crédito ofrecemos hasta 6 cuotas sin interés en compras superiores a 100.000 COP, sujeto a las políticas de tu banco emisor."
+  },
+  {
+    "id": "faq-005",
+    "categoria": "cuenta",
+    "pregunta": "¿Cómo cambio la dirección de entrega de un pedido ya realizado?",
+    "respuesta": "Si el pedido aún no ha sido despachado, puedes solicitar el cambio de dirección contactando a soporte con tu número de pedido. Una vez el pedido está 'en tránsito' o 'entregado', no es posible modificar la dirección."
+  },
+  {
+    "id": "faq-006",
+    "categoria": "cuenta",
+    "pregunta": "¿Cómo elimino mi cuenta y mis datos personales?",
+    "respuesta": "Puedes solicitar la eliminación de tu cuenta escribiendo a soporte@ecomarket.com. Procesamos la solicitud en un máximo de 15 días hábiles conforme a la normativa de protección de datos personales."
+  },
+  {
+    "id": "faq-007",
+    "categoria": "sostenibilidad",
+    "pregunta": "¿Los empaques de EcoMarket son reciclables?",
+    "respuesta": "Sí, todos nuestros empaques de envío son 100% biodegradables o reciclables. Además, muchos de nuestros proveedores usan cajas reutilizadas para reducir el impacto ambiental del transporte."
+  },
+  {
+    "id": "faq-008",
+    "categoria": "sostenibilidad",
+    "pregunta": "¿Cómo verifica EcoMarket que sus productos son realmente sostenibles?",
+    "respuesta": "Cada producto pasa por un proceso de verificación con proveedores certificados y, cuando aplica, se muestra el sello o certificación ambiental correspondiente en la ficha del producto."
+  },
+  {
+    "id": "faq-009",
+    "categoria": "devoluciones",
+    "pregunta": "¿Tengo que pagar el envío si quiero devolver un producto?",
+    "respuesta": "Depende del motivo: si el producto llegó defectuoso, dañado o fue un error de despacho, EcoMarket cubre el envío de devolución. Si es por cambio de opinión, el costo de envío de retorno lo asume el cliente. Consulta la política de devoluciones completa para más detalle por categoría de producto."
+  },
+  {
+    "id": "faq-010",
+    "categoria": "productos",
+    "pregunta": "¿Cómo sé si un producto tiene disponibilidad en inventario?",
+    "respuesta": "La disponibilidad de cada producto se muestra en tiempo real en su ficha dentro del catálogo. Si un producto está agotado, puedes activar una notificación para saber cuándo vuelve a estar disponible."
+  }
+]
