@@ -1,6 +1,6 @@
 # Proyecto Final - Resultados de la evaluación del agente
 
-_Generado automáticamente por `src/agent/evaluate.py` el 2026-10-31 10:34 con el modelo `qwen2.5:3b` (temperature=0), guardrails activados._
+_Generado automáticamente por `src/agent/evaluate.py` el 2026-10-31 10:40 con el modelo `qwen2.5:3b` (temperature=0), guardrails activados._
 
 **Resultado: 13/13 casos pasan.** Un caso pasa si el agente usa las herramientas esperadas y ninguna de las prohibidas (ver `CASES` en `evaluate.py`). De los casos que pasan, 6 necesitaron que un guardrail completara o corrigiera la respuesta del LLM (columna Guardrails).
 
@@ -22,37 +22,37 @@ _Generado automáticamente por `src/agent/evaluate.py` el 2026-10-31 10:34 con e
 
 ## Respuestas completas del agente
 
-### `saludo` (0.8 s)
+### `saludo` (5.1 s)
 
 > **Cliente:** Hola, buenos días
 
 **Agente:** Buenos días, cómo puedo ayudarte hoy?
 
-### `faq_envios` (21.0 s)
+### `faq_envios` (23.7 s)
 
 > **Cliente:** ¿EcoMarket hace envíos a otros países?
 
 **Agente:** Por ahora solo realizamos envíos dentro de Colombia. Estamos evaluando expandir la cobertura a otros países de la región en el futuro.
 
-### `precio_catalogo` (13.8 s)
+### `precio_catalogo` (13.7 s)
 
 > **Cliente:** ¿Cuánto cuesta la botella térmica de acero?
 
 **Agente:** La botella térmica de acero cuesta $89000 COP. Según la política de devoluciones, se acepta la devolución dentro de los 30 días si el producto no ha sido usado y conserva su empaque original. Si presenta fugas o defectos de sellado de fábrica, incluso si ya fue utilizado, se aceptará con evidencia fotográfica del defecto.
 
-### `estado_pedido` (11.2 s)
+### `estado_pedido` (10.9 s)
 
 > **Cliente:** ¿Cuál es el estado de mi pedido ECO1004?
 
 **Agente:** Tu pedido ECO1004 está retrasado. La entrega está programada para el 22 de abril, pero debido a una alta demanda y un cierre de vía en la ruta de distribución, no tenemos una fecha estimada de entrega concreta aún. Puedes seguir el estado de tu pedido en este enlace: [Rastreo del pedido](https://ecomarket.example/track/ECO1004).
 
-### `devolucion_sin_datos` (2.1 s)
+### `devolucion_sin_datos` (1.9 s)
 
 > **Cliente:** Quiero hacer una devolución
 
 **Agente:** Por supuesto. Para poder ayudarte con la devolución necesito el número de pedido y el motivo por el cual deseas devolverlo. ¿Podrías proporcionarme estos detalles?
 
-### `devolucion_elegible` (7.3 s)
+### `devolucion_elegible` (6.5 s)
 
 > **Cliente:** Quiero devolver mi pedido ECO1012, me llegó un producto diferente al que pedí
 
@@ -67,7 +67,7 @@ _Generado automáticamente por `src/agent/evaluate.py` el 2026-10-31 10:34 con e
   
 Reembolso: Al medio de pago original en 5 a 8 días hábiles tras la verificación en bodega.
 
-### `devolucion_no_elegible_higiene` (7.0 s)
+### `devolucion_no_elegible_higiene` (6.5 s)
 
 > **Cliente:** Quiero devolver el pedido ECO1006, ya abrí el empaque pero no me gustó
 
@@ -83,7 +83,7 @@ El empaque del producto ya fue abierto. ¿Podrías confirmarme si el cliente abr
   
 Si tienes alguna otra pregunta o necesitas ayuda con algo más, estaré encantado de asistirte.
 
-### `devolucion_pide_info_multiturno` (9.2 s)
+### `devolucion_pide_info_multiturno` (8.3 s)
 
 > **Cliente:** Quiero devolver la botella del pedido ECO1011, cambié de opinión
 > **Cliente:** No, nunca la he usado, sigue nueva en su caja
@@ -99,7 +99,7 @@ Si tienes alguna otra pregunta o necesitas ayuda con algo más, estaré encantad
   
 Reembolso: Al medio de pago original en 5 a 8 días hábiles tras la verificación en bodega.
 
-### `devolucion_alto_valor` (7.9 s)
+### `devolucion_alto_valor` (7.8 s)
 
 > **Cliente:** Quiero devolver el pedido ECO1014, las botellas vinieron con defecto de fábrica
 
@@ -111,7 +111,7 @@ Reembolso: Al medio de pago original en 5 a 8 días hábiles tras la verificaci�
 
 **Agente:** Lo siento, pero no encontramos un pedido con ese número. Por favor, verifica que el número esté correcto y inténtalo nuevamente.
 
-### `fuera_de_dominio` (4.5 s)
+### `fuera_de_dominio` (1.4 s)
 
 > **Cliente:** ¿Cuál es la capital de Francia?
 
