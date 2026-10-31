@@ -6,3 +6,5 @@ langchain-text-splitters
 langchain-core
 chromadb
 sentence-transformers
+langgraph
+streamlit

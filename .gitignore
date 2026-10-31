@@ -3,3 +3,5 @@ __pycache__/
 .venv/
 Data/vector_store/
 .DS_Store
+Data/returns/
+Data/logs/

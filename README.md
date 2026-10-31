@@ -1,8 +1,9 @@
 # EcoMarket AI Support
 
 Solución propuesta para el Taller Práctico #1: "Optimización de la Atención al Cliente
-en una Empresa de E-commerce" y su extensión en el Taller Práctico #2, que incorpora un
-sistema RAG (Generación Aumentada por Recuperación). El caso: EcoMarket recibe miles de
+en una Empresa de E-commerce", su extensión en el Taller Práctico #2, que incorpora un
+sistema RAG (Generación Aumentada por Recuperación), y el **Proyecto Final**, que agrega
+un agente de IA capaz de tramitar devoluciones de forma autónoma, con interfaz web. El caso: EcoMarket recibe miles de
 consultas diarias (80% repetitivas: pedidos, devoluciones, producto) con un tiempo de
 respuesta promedio de 24 horas.
 
@@ -16,7 +17,8 @@ respuesta promedio de 24 horas.
 
 Datos de soporte para la Fase 3 del Taller 1 (simulan la base de datos interna de EcoMarket):
 
-- `Data/orders.json`: 10 pedidos de ejemplo (estado, entrega estimada, enlace de rastreo).
+- `Data/orders.json`: 14 pedidos de ejemplo (estado, entrega estimada, enlace de rastreo;
+  el Proyecto Final agregó `delivered_date`, `quantity` y los pedidos ECO1011-ECO1014).
 - `Data/return_policies.json`: políticas de devolución por categoría de producto.
 
 ## Taller 2: sistema RAG
@@ -72,6 +74,26 @@ pedido, un caso de pedido inexistente, y dos casos de devolución (uno permitido
 permitido). El análisis de esas salidas está en
 [Docs/fase3_aplicacion.md](Docs/fase3_aplicacion.md).
 
+## Proyecto Final: agente de IA para devoluciones
+
+| Fase | Contenido | Archivo |
+|---|---|---|
+| 1. Diseño de la arquitectura | Arquitectura híbrida (agente + router por reglas), 5 herramientas, LangChain vs LlamaIndex, elección del modelo, diagrama de flujo | [Docs/proyecto_final_fase1_arquitectura.md](Docs/proyecto_final_fase1_arquitectura.md) |
+| 2. Implementación | Estructura del código, manejo de éxito/error, guardrails, evaluación del comportamiento | [Docs/proyecto_final_fase2_implementacion.md](Docs/proyecto_final_fase2_implementacion.md) |
+| 3. Análisis crítico | Riesgos éticos y de seguridad (observados y mitigados), monitoreo, propuestas de mejora | [Docs/proyecto_final_fase3_analisis.md](Docs/proyecto_final_fase3_analisis.md) |
+| 4. Despliegue | Streamlit vs Gradio, interfaz, cómo ejecutar, guion de la demo | [Docs/proyecto_final_fase4_despliegue.md](Docs/proyecto_final_fase4_despliegue.md) |
+
+### Cómo ejecutar el agente (Proyecto Final)
+
+```bash
+source .venv/bin/activate && pip install -r requirements.txt
+ollama pull qwen2.5:3b                              # modelo del agente (tool calling)
+cd src/rag && python3 build_index.py && cd ../..    # índice RAG, solo la primera vez
+
+streamlit run src/agent/app.py                      # interfaz web (http://localhost:8501)
+cd src/agent && python3 evaluate.py                 # batería de pruebas del agente
+```
+
 ## Estructura del repositorio
 
 ```
@@ -85,7 +107,9 @@ GEN-IA-S2/
 │   │   ├── politica_devoluciones.md
 │   │   ├── preguntas_frecuentes.json
 │   │   └── catalogo_productos.csv
-│   └── vector_store/           # índice de ChromaDB persistido (generado, no versionado)
+│   ├── vector_store/           # índice de ChromaDB persistido (generado, no versionado)
+│   ├── returns/                # etiquetas y registro de devoluciones simuladas (generado)
+│   └── logs/                   # agent_actions.jsonl: registro de acciones del agente (generado)
 ├── Docs/
 │   ├── fase1_modelo.md
 │   ├── fase2_evaluacion.md
@@ -96,14 +120,22 @@ GEN-IA-S2/
 │   ├── main.py             # Taller 1: arma los prompts con contexto real y llama al LLM
 │   ├── prompts.py           # Taller 1: plantillas de prompts (básico y mejorado)
 │   ├── llm_client.py         # Taller 1: cliente HTTP hacia Ollama
-│   └── rag/                  # Taller 2: sistema RAG (LangChain + ChromaDB + Ollama)
+│   ├── rag/                  # Taller 2: sistema RAG (LangChain + ChromaDB + Ollama)
 │       ├── README.md
 │       ├── config.py
 │       ├── knowledge_loader.py
 │       ├── build_index.py
 │       ├── chain.py
 │       ├── order_lookup.py
-│       └── main.py
+│   │   └── main.py
+│   └── agent/                # Proyecto Final: agente de devoluciones + interfaz Streamlit
+│       ├── agent_config.py   # modelo, fecha simulada, umbrales de la política, rutas
+│       ├── returns_service.py # backend simulado: reglas de elegibilidad, etiquetas, tickets
+│       ├── tools.py          # las 5 herramientas (@tool) que ve el LLM
+│       ├── action_log.py     # registro de acciones (observabilidad)
+│       ├── agent.py          # router + agente LangChain + guardrails
+│       ├── evaluate.py       # evaluación del comportamiento
+│       └── app.py            # interfaz web (Streamlit)
 └── Talleres/
     ├── Taller 1.pdf
     └── Taller2.md
