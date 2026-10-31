@@ -131,6 +131,7 @@ GEN-IA-S2/
 │   └── agent/                # Proyecto Final: agente de devoluciones + interfaz Streamlit
 │       ├── agent_config.py   # modelo, fecha simulada, umbrales de la política, rutas
 │       ├── returns_service.py # backend simulado: reglas de elegibilidad, etiquetas, tickets
+│       ├── label_pdf.py      # etiqueta de devolución en PDF
 │       ├── tools.py          # las 5 herramientas (@tool) que ve el LLM
 │       ├── action_log.py     # registro de acciones (observabilidad)
 │       ├── agent.py          # router + agente LangChain + guardrails
