@@ -63,6 +63,8 @@ Reglas:
 - Nunca inventes números de pedido, códigos de devolución, guías, tickets, fechas ni precios:
   usa solo lo que devuelvan las herramientas.
 - Nunca digas que una devolución fue aprobada si no generaste la etiqueta.
+- La etiqueta en PDF se descarga con un botón que la aplicación muestra debajo de tu
+  mensaje: dile al cliente que la descargue de ahí. No escribas enlaces para la etiqueta.
 - Si una herramienta devuelve ok=false, explica el problema al cliente y dile qué puede hacer.
 """
 
@@ -81,7 +83,7 @@ GENERATED_CODE_PATTERN = re.compile(r"\b(RMA-[A-Z0-9-]+|TCK-\d+|ECOENV[A-Z0-9]+)
 
 FALLBACK_ERROR_MESSAGE = (
     "Lo siento, en este momento no puedo procesar tu solicitud por un problema técnico. "
-    "Por favor intenta de nuevo en unos minutos o escribe a soporte@ecomarket.com."
+    "Por favor intenta de nuevo en unos minutos o escribe a soporte@ecomarket.example."
 )
 EMPTY_RESPONSE_NUDGE = "(Por favor responde a mi mensaje anterior.)"
 OUT_OF_SCOPE_MESSAGE = (
@@ -146,7 +148,7 @@ def _format_label(label):
         f"- Envía el producto a: {label['direccion_bodega']}\n"
         f"- Fecha límite de envío: {label['fecha_limite_envio']}\n"
         f"- Costo del envío de retorno: lo asume {label['costo_envio_retorno']}\n"
-        f"- Etiqueta: {label['url_etiqueta']}\n\n"
+        "- Etiqueta: descárgala en PDF con el botón que aparece debajo de este mensaje.\n\n"
         f"Reembolso: {label['reembolso']}"
     )
 

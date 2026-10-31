@@ -16,7 +16,7 @@ import streamlit as st  # noqa: E402
 import returns_service  # noqa: E402
 from action_log import new_session_id  # noqa: E402
 from agent import run_turn  # noqa: E402
-from agent_config import AGENT_MODEL, OLLAMA_BASE_URL, SIMULATED_TODAY  # noqa: E402
+from agent_config import AGENT_MODEL, BASE_DIR, OLLAMA_BASE_URL, SIMULATED_TODAY  # noqa: E402
 
 EXAMPLES = {
     "Pregunta general (RAG)": "¿EcoMarket hace envíos a otros países?",
@@ -65,6 +65,21 @@ def render_trace(turn):
             st.warning("Guardrails activados: " + ", ".join(turn["guardrails"]))
 
 
+def render_labels(turn, key_prefix):
+    """Botón de descarga para cada etiqueta que el agente generó en el turno."""
+    for c in turn.get("tool_calls", []):
+        if c["tool"] != "generar_etiqueta_devolucion" or not c["result"].get("ok"):
+            continue
+        rma = c["result"]["codigo_devolucion"]
+        path = BASE_DIR / c["result"].get("archivo_etiqueta", f"__sin_archivo__/{rma}.pdf")
+        if path.exists():
+            st.download_button(f"📄 Descargar etiqueta {rma} (PDF)", data=path.read_bytes(),
+                               file_name=path.name, mime="application/pdf",
+                               key=f"{key_prefix}-{rma}")
+        else:
+            st.caption(f"La etiqueta {rma} ya no está disponible (se reiniciaron los datos de la demo).")
+
+
 def show_text(text):
     # st.markdown interpreta "$...$" como LaTeX y las respuestas traen precios en $.
     st.markdown(text.replace("$", "\\$"))
@@ -86,6 +101,9 @@ with st.sidebar:
              "**tramita devoluciones** (verifica elegibilidad y genera la etiqueta).")
     st.caption(f"Modelo: `{AGENT_MODEL}` vía Ollama · Fecha simulada: {SIMULATED_TODAY}")
     st.caption(f"Sesión: `{st.session_state.session_id}`")
+    st.caption("⚠️ Proyecto académico con datos simulados: los enlaces de rastreo "
+               "(ecomarket.example) no llevan a un sitio real. Las etiquetas sí se generan "
+               "en PDF y se descargan desde el chat.")
 
     st.subheader("Ejemplos")
     for title, prompt in EXAMPLES.items():
@@ -116,10 +134,11 @@ if not st.session_state.messages:
     st.info("¡Hola! Pregúntame por un pedido (ej. ECO1004), por nuestras políticas o "
             "pídeme tramitar una devolución. También puedes probar los ejemplos de la barra lateral.")
 
-for msg in st.session_state.messages:
+for i, msg in enumerate(st.session_state.messages):
     with st.chat_message(msg["role"], avatar="🌱" if msg["role"] == "assistant" else None):
         show_text(msg["content"])
         if msg["role"] == "assistant":
+            render_labels(msg["turn"], key_prefix=f"msg{i}")
             render_trace(msg["turn"])
 
 prompt = st.chat_input("Escribe tu mensaje...", disabled=not ok)
@@ -133,6 +152,7 @@ if prompt and ok:
         with st.spinner("Pensando..."):
             turn = run_turn(prompt, session_id=st.session_state.session_id)
         show_text(turn["answer"])
+        render_labels(turn, key_prefix=f"msg{len(st.session_state.messages)}")
         render_trace(turn)
         if turn["error"]:
             st.caption(f"Detalle técnico: {turn['error']}")

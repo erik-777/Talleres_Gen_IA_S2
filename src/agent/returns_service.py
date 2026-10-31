@@ -12,6 +12,7 @@ import json
 from datetime import date, datetime, timedelta
 
 from agent_config import (
+    BASE_DIR,
     CATALOG_FILE,
     HIGH_VALUE_THRESHOLD_COP,
     LABEL_SHIPPING_DEADLINE_DAYS,
@@ -22,6 +23,7 @@ from agent_config import (
     RETURN_WINDOW_DAYS,
     SIMULATED_TODAY,
 )
+from label_pdf import render_label_pdf
 
 MOTIVOS = {
     "defecto_fabrica": "defecto de fábrica",
@@ -87,7 +89,7 @@ def reset_registry():
     if REGISTRY_FILE.exists():
         REGISTRY_FILE.unlink()
     if LABELS_DIR.exists():
-        for label in LABELS_DIR.glob("*.txt"):
+        for label in LABELS_DIR.glob("RMA-*"):
             label.unlink()
 
 
@@ -278,14 +280,13 @@ def create_return_label(numero_pedido, motivo, empaque_abierto=None, producto_us
         "direccion_bodega": RETURN_WAREHOUSE_ADDRESS,
         "fecha_limite_envio": (SIMULATED_TODAY + timedelta(days=LABEL_SHIPPING_DEADLINE_DAYS)).isoformat(),
         "costo_envio_retorno": eligibility["costo_envio_retorno"],
-        "url_etiqueta": f"https://ecomarket.com/devoluciones/{rma}.pdf",
+        "archivo_etiqueta": str((LABELS_DIR / f"{rma}.pdf").relative_to(BASE_DIR)),
         "reembolso": "Al medio de pago original en 5 a 8 días hábiles tras la verificación en bodega.",
     }
 
     LABELS_DIR.mkdir(parents=True, exist_ok=True)
-    (LABELS_DIR / f"{rma}.txt").write_text(
-        "\n".join(f"{k}: {v}" for k, v in label.items()) + "\n", encoding="utf-8"
-    )
+    (LABELS_DIR / f"{rma}.pdf").write_bytes(render_label_pdf(
+        label, find_order(order_id)["customer_name"], eligibility["producto"], MOTIVOS[motivo]))
     registry["etiquetas"][order_id] = label
     _save_registry(registry)
     return {"ok": True, "ya_existia": False, **label}
